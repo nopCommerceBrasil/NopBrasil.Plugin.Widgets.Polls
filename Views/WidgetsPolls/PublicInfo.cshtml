@@ -1,0 +1,86 @@
+﻿@model NopBrasil.Plugin.Widgets.Polls.Models.PublicInfoModel
+@using NopBrasil.Plugin.Widgets.Polls.Models
+@if (Model.Polls.Count > 0)
+{
+    <div class="home-page-polls">
+        <div class="title">
+            <strong>@T("Polls.Title")</strong>
+        </div>
+        <div class="Polls-items">
+            @foreach (var poll in Model.Polls)
+            {
+                <div class="poll" id="poll-block-@(poll.Id)">
+                    <strong class="poll-display-text">@poll.Name</strong>
+                    @if (poll.AlreadyVoted)
+                    {
+                        <ul class="poll-results">
+                            @foreach (var item in poll.Answers)
+                            {
+                                <li class="answer">
+                                    @string.Format(T("Polls.VotesResultLine").Text, item.Name, item.NumberOfVotes, item.PercentOfTotalVotes.ToString("0.0"))
+                                </li>
+                            }
+                        </ul>
+                        <span class="poll-total-votes">@string.Format(T("Polls.TotalVotes").Text, poll.TotalVotes)</span>
+                    }
+                    else
+                    {
+                        <ul class="poll-options">
+                            @foreach (var item in poll.Answers)
+                            {
+                                <li class="answer">
+                                    <input id="pollanswers-@(item.Id)" type="radio" name="pollanswers-@(poll.Id)" value="@item.Id" />
+                                    <label for="pollanswers-@(item.Id)">@item.Name</label>
+                                </li>
+                            }
+                        </ul>
+                        <div class="buttons">
+                            <input type="button" value="@T("Polls.Vote")" id="vote-poll-@(poll.Id)" class="button-2 vote-poll-button" />
+                            <span id="poll-voting-progress-@(poll.Id)" style="display: none;" class="please-wait">@T("Common.Wait...")</span>
+                        </div>
+                        <div class="poll-vote-error" id="block-poll-vote-error-@(poll.Id)" style="display:none">
+                        </div>
+
+                        <script type="text/javascript">
+                                $(document).ready(function () {
+                                    $('#vote-poll-@(poll.Id)').click(function () {
+                                    var pollAnswerId = $("input:radio[name=pollanswers-@(poll.Id)]:checked").val();
+                                    if (typeof (pollAnswerId) == 'undefined') {
+                                        alert('@Html.Raw(HttpUtility.JavaScriptStringEncode(T("Polls.SelectAnswer").Text))');
+                                    }
+                                    else {
+                                        var voteProgress = $("#poll-voting-progress-@(poll.Id)");
+                                        voteProgress.show();
+                                        $.ajax({
+                                            cache: false,
+                                            type: "POST",
+                                            url: "@(Url.RouteUrl("PollVote"))",
+                                            data: { "pollAnswerId": pollAnswerId },
+                                            success: function (data) {
+                                                voteProgress.hide();
+
+                                                if (data.error) {
+                                                    $("#block-poll-vote-error-@(poll.Id)").html(data.error);
+                                                    $('#block-poll-vote-error-@(poll.Id)').fadeIn("slow").delay(2000).fadeOut("slow");
+                                                }
+
+                                                if (data.html) {
+                                                    $("#poll-block-@(poll.Id)").replaceWith(data.html);
+                                                }
+                                            },
+                                            error: function (xhr, ajaxOptions, thrownError) {
+                                                alert('Failed to vote.');
+                                                voteProgress.hide();
+                                            }
+                                        });
+                                    }
+                                    return false;
+                                });
+                            });
+                        </script>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+}
