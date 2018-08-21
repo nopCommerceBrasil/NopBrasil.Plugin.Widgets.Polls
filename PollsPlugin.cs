@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-using System.Web.Routing;
+using Nop.Core;
 using Nop.Core.Plugins;
 using Nop.Services.Cms;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
-using Nop.Services.Media;
 
 namespace NopBrasil.Plugin.Widgets.Polls
 {
@@ -12,37 +11,20 @@ namespace NopBrasil.Plugin.Widgets.Polls
     {
         private readonly ISettingService _settingService;
         private readonly PollsSettings _pollsSettings;
+        private readonly IWebHelper _webHelper;
 
-        public PollsPlugin(IPictureService pictureService,
-            ISettingService settingService, PollsSettings pollsSettings)
+        public PollsPlugin(ISettingService settingService, PollsSettings pollsSettings, IWebHelper webHelper)
         {
             this._settingService = settingService;
             this._pollsSettings = pollsSettings;
+            this._webHelper = webHelper;
         }
 
-        public IList<string> GetWidgetZones()
-        {
-            return new List<string> { _pollsSettings.WidgetZone };
-        }
+        public IList<string> GetWidgetZones() => new List<string> { _pollsSettings.WidgetZone };
 
-        public void GetConfigurationRoute(out string actionName, out string controllerName, out RouteValueDictionary routeValues)
-        {
-            actionName = "Configure";
-            controllerName = "WidgetsPolls";
-            routeValues = new RouteValueDictionary { { "Namespaces", "NopBrasil.Plugin.Widgets.Polls.Controllers" }, { "area", null } };
-        }
+        public override string GetConfigurationPageUrl() => _webHelper.GetStoreLocation() + "Admin/WidgetsPolls/Configure";
 
-        public void GetDisplayWidgetRoute(string widgetZone, out string actionName, out string controllerName, out RouteValueDictionary routeValues)
-        {
-            actionName = "PublicInfo";
-            controllerName = "WidgetsPolls";
-            routeValues = new RouteValueDictionary
-            {
-                {"Namespaces", "NopBrasil.Plugin.Widgets.Polls.Controllers"},
-                {"area", null},
-                {"widgetZone", widgetZone}
-            };
-        }
+        public void GetPublicViewComponent(string widgetZone, out string viewComponentName) => viewComponentName = "WidgetsPolls";
 
         public override void Install()
         {
@@ -63,10 +45,8 @@ namespace NopBrasil.Plugin.Widgets.Polls
 
         public override void Uninstall()
         {
-            //settings
             _settingService.DeleteSetting<PollsSettings>();
 
-            //locales
             this.DeletePluginLocaleResource("Plugins.Widgets.Polls.Fields.WidgetZone");
             this.DeletePluginLocaleResource("Plugins.Widgets.Polls.Fields.WidgetZone.Hint");
             this.DeletePluginLocaleResource("Plugins.Widgets.Polls.Fields.QtdPolls");

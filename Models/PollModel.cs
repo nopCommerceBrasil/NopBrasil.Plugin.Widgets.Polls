@@ -1,5 +1,4 @@
-﻿using Nop.Web.Framework.Mvc;
-using System;
+﻿using Nop.Web.Framework.Mvc.Models;
 using System.Collections.Generic;
 
 namespace NopBrasil.Plugin.Widgets.Polls.Models

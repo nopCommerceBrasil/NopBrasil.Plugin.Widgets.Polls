@@ -1,0 +1,11 @@
+﻿{
+    "Group": "Widgets",
+    "FriendlyName": "Polls",
+    "SystemName": "Widgets.Polls",
+    "Version": "1.00",
+    "SupportedVersions": [ "4.00" ],
+    "Author": "nopCommerce Brasil - www.nopcommercebrasil.com - nopcommercebrasil@nopcommercebrasil.com",
+    "DisplayOrder": 1,
+    "FileName": "NopBrasil.Plugin.Widgets.Polls.dll",
+    "Description": "Plugin for nopCommerce to show polls in a widget zone"
+  }

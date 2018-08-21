@@ -1,57 +1,47 @@
-﻿using System.Web.Mvc;
-using NopBrasil.Plugin.Widgets.Polls.Models;
+﻿using NopBrasil.Plugin.Widgets.Polls.Models;
 using Nop.Services.Configuration;
 using Nop.Web.Framework.Controllers;
-using Nop.Web.Controllers;
-using NopBrasil.Plugin.Widgets.Polls.Service;
+using Nop.Web.Framework;
+using Microsoft.AspNetCore.Mvc;
+using Nop.Services.Localization;
 
 namespace NopBrasil.Plugin.Widgets.Polls.Controllers
 {
-    public class WidgetsPollsController : BasePublicController
+    [Area(AreaNames.Admin)]
+    public class WidgetsPollsController : BasePluginController
     {
         private readonly ISettingService _settingService;
-        private readonly PollsSettings _PollsSettings;
-        private readonly IWidgetPollsService _widgetPollsService;
+        private readonly PollsSettings _pollsSettings;
+        private readonly ILocalizationService _localizationService;
 
-        public WidgetsPollsController(ISettingService settingService,
-            PollsSettings PollsSettings, IWidgetPollsService widgetPollsService)
+        public WidgetsPollsController(ISettingService settingService, PollsSettings pollsSettings, ILocalizationService localizationService)
         {
             this._settingService = settingService;
-            this._PollsSettings = PollsSettings;
-            this._widgetPollsService = widgetPollsService;
+            this._pollsSettings = pollsSettings;
+            this._localizationService = localizationService;
         }
 
-        [AdminAuthorize]
-        [ChildActionOnly]
         public ActionResult Configure()
         {
             var model = new ConfigurationModel()
             {
-                WidgetZone = _PollsSettings.WidgetZone,
-                QtdPolls = _PollsSettings.QtdPolls
+                WidgetZone = _pollsSettings.WidgetZone,
+                QtdPolls = _pollsSettings.QtdPolls
             };
-            return View("~/Plugins/Widgets.Polls/Views/WidgetsPolls/Configure.cshtml", model);
+            return View("~/Plugins/Widgets.Polls/Views/Configure.cshtml", model);
         }
 
         [HttpPost]
-        [AdminAuthorize]
-        [ChildActionOnly]
         public ActionResult Configure(ConfigurationModel model)
         {
             if (!ModelState.IsValid)
-            {
                 return Configure();
-            }
-            _PollsSettings.QtdPolls = model.QtdPolls;
-            _PollsSettings.WidgetZone = model.WidgetZone;
-            _settingService.SaveSetting(_PollsSettings);
-            return Configure();
-        }
 
-        [ChildActionOnly]
-        public ActionResult PublicInfo(string widgetZone, object additionalData = null)
-        {
-             return View("~/Plugins/Widgets.Polls/Views/WidgetsPolls/PublicInfo.cshtml", _widgetPollsService.GetModel());
+            _pollsSettings.QtdPolls = model.QtdPolls;
+            _pollsSettings.WidgetZone = model.WidgetZone;
+            _settingService.SaveSetting(_pollsSettings);
+            SuccessNotification(_localizationService.GetResource("Admin.Plugins.Saved"));
+            return Configure();
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿@model NopBrasil.Plugin.Widgets.Polls.Models.PublicInfoModel
-@using NopBrasil.Plugin.Widgets.Polls.Models
+
 @if (Model.Polls.Count > 0)
 {
     <div class="home-page-polls">
@@ -46,7 +46,7 @@
                                     $('#vote-poll-@(poll.Id)').click(function () {
                                     var pollAnswerId = $("input:radio[name=pollanswers-@(poll.Id)]:checked").val();
                                     if (typeof (pollAnswerId) == 'undefined') {
-                                        alert('@Html.Raw(HttpUtility.JavaScriptStringEncode(T("Polls.SelectAnswer").Text))');
+                                        alert('@Html.Raw(JavaScriptEncoder.Default.Encode(T("Polls.SelectAnswer").Text))');
                                     }
                                     else {
                                         var voteProgress = $("#poll-voting-progress-@(poll.Id)");

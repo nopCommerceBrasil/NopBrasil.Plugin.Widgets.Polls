@@ -30,13 +30,8 @@ namespace NopBrasil.Plugin.Widgets.Polls.Service
             return _cacheManager.Get<IList<PollModel>>(cacheKey, () => _pollService.GetPolls(_workContext.WorkingLanguage.Id, false, pageIndex: 0, pageSize: _pollsSettings.QtdPolls).Select(p => PreparePollModel(p)).ToList());
         }
 
-        public PublicInfoModel GetModel()
-        {
-            PublicInfoModel model = new PublicInfoModel();
-            model.Polls = GetAllPolls();
-            return model;
-        }
-
+        public PublicInfoModel GetModel() => new PublicInfoModel { Polls = GetAllPolls() };
+        
         private PollModel PreparePollModel(Poll poll)
         {
             if (poll == null)
@@ -58,7 +53,7 @@ namespace NopBrasil.Plugin.Widgets.Polls.Service
                     Id = pa.Id,
                     Name = pa.Name,
                     NumberOfVotes = pa.NumberOfVotes,
-                    PercentOfTotalVotes = model.TotalVotes > 0 ? ((Convert.ToDouble(pa.NumberOfVotes) / Convert.ToDouble(model.TotalVotes)) * Convert.ToDouble(100)) : 0,
+                    PercentOfTotalVotes = model.TotalVotes > 0 ? ((Convert.ToDouble(pa.NumberOfVotes) / Convert.ToDouble(model.TotalVotes)) * Convert.ToDouble(100)) : 0
                 });
             }
 
