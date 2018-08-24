@@ -16,7 +16,7 @@ namespace NopBrasil.Plugin.Widgets.Polls.Service
         private readonly ICacheManager _cacheManager;
         private readonly IWorkContext _workContext;
 
-        public WidgetPollsService(IPollService pollService, PollsSettings pollsSettings, ICacheManager cacheManager, IWorkContext workContext)
+        public WidgetPollsService(IPollService pollService, PollsSettings pollsSettings, IStaticCacheManager cacheManager, IWorkContext workContext)
         {
             this._pollService = pollService;
             this._pollsSettings = pollsSettings;

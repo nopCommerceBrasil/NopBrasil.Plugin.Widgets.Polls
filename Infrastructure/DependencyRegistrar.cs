@@ -1,6 +1,4 @@
 using Autofac;
-using Autofac.Core;
-using Nop.Core.Caching;
 using Nop.Core.Configuration;
 using Nop.Core.Infrastructure;
 using Nop.Core.Infrastructure.DependencyManagement;
@@ -12,7 +10,7 @@ namespace NopBrasil.Plugin.Widgets.Polls.Infrastructure
     {
         public virtual void Register(ContainerBuilder builder, ITypeFinder typeFinder, NopConfig nopConfig)
         {
-            builder.RegisterType<WidgetPollsService>().As<IWidgetPollsService>().WithParameter(ResolvedParameter.ForNamed<ICacheManager>("nop_cache_static")).InstancePerDependency();
+            builder.RegisterType<WidgetPollsService>().As<IWidgetPollsService>().InstancePerDependency();
         }
 
         public int Order => 2;
