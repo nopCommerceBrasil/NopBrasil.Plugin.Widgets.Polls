@@ -15,19 +15,21 @@ namespace NopBrasil.Plugin.Widgets.Polls.Service
         private readonly PollsSettings _pollsSettings;
         private readonly ICacheManager _cacheManager;
         private readonly IWorkContext _workContext;
+        private readonly IStoreContext _storeContext;
 
-        public WidgetPollsService(IPollService pollService, PollsSettings pollsSettings, IStaticCacheManager cacheManager, IWorkContext workContext)
+        public WidgetPollsService(IPollService pollService, PollsSettings pollsSettings, IStaticCacheManager cacheManager, IWorkContext workContext, IStoreContext storeContext)
         {
             this._pollService = pollService;
             this._pollsSettings = pollsSettings;
             this._cacheManager = cacheManager;
             this._workContext = workContext;
+            this._storeContext = storeContext;
         }
 
         private IList<PollModel> GetAllPolls()
         {
             string cacheKey = $"nopBrasil:polls:language:{_workContext.WorkingLanguage.Id}:qtd:{_pollsSettings.QtdPolls}";
-            return _cacheManager.Get<IList<PollModel>>(cacheKey, () => _pollService.GetPolls(_workContext.WorkingLanguage.Id, false, pageIndex: 0, pageSize: _pollsSettings.QtdPolls).Select(p => PreparePollModel(p)).ToList());
+            return _cacheManager.Get<IList<PollModel>>(cacheKey, () => _pollService.GetPolls(_storeContext.CurrentStore.Id, _workContext.WorkingLanguage.Id, false, pageIndex: 0, pageSize: _pollsSettings.QtdPolls).Select(p => PreparePollModel(p)).ToList());
         }
 
         public PublicInfoModel GetModel() => new PublicInfoModel { Polls = GetAllPolls() };

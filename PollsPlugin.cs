@@ -12,19 +12,19 @@ namespace NopBrasil.Plugin.Widgets.Polls
         private readonly ISettingService _settingService;
         private readonly PollsSettings _pollsSettings;
         private readonly IWebHelper _webHelper;
+        private readonly ILocalizationService _localizationService;
 
-        public PollsPlugin(ISettingService settingService, PollsSettings pollsSettings, IWebHelper webHelper)
+        public PollsPlugin(ISettingService settingService, PollsSettings pollsSettings, IWebHelper webHelper, ILocalizationService localizationService)
         {
             this._settingService = settingService;
             this._pollsSettings = pollsSettings;
             this._webHelper = webHelper;
+            this._localizationService = localizationService;
         }
 
         public IList<string> GetWidgetZones() => new List<string> { _pollsSettings.WidgetZone };
 
         public override string GetConfigurationPageUrl() => _webHelper.GetStoreLocation() + "Admin/WidgetsPolls/Configure";
-
-        public void GetPublicViewComponent(string widgetZone, out string viewComponentName) => viewComponentName = "WidgetsPolls";
 
         public override void Install()
         {
@@ -35,10 +35,10 @@ namespace NopBrasil.Plugin.Widgets.Polls
             };
             _settingService.SaveSetting(settings);
 
-            this.AddOrUpdatePluginLocaleResource("Plugins.Widgets.Polls.Fields.WidgetZone", "WidgetZone name");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Widgets.Polls.Fields.WidgetZone.Hint", "Enter the WidgetZone name that will display the HTML code.");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Widgets.Polls.Fields.QtdPolls", "Number of Polls items");
-            this.AddOrUpdatePluginLocaleResource("Plugins.Widgets.Polls.Fields.QtdPolls.Hint", "Enter the number of Polls items that will be displayed in view.");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Widgets.Polls.Fields.WidgetZone", "WidgetZone name");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Widgets.Polls.Fields.WidgetZone.Hint", "Enter the WidgetZone name that will display the HTML code.");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Widgets.Polls.Fields.QtdPolls", "Number of Polls items");
+            _localizationService.AddOrUpdatePluginLocaleResource("Plugins.Widgets.Polls.Fields.QtdPolls.Hint", "Enter the number of Polls items that will be displayed in view.");
 
             base.Install();
         }
@@ -47,12 +47,14 @@ namespace NopBrasil.Plugin.Widgets.Polls
         {
             _settingService.DeleteSetting<PollsSettings>();
 
-            this.DeletePluginLocaleResource("Plugins.Widgets.Polls.Fields.WidgetZone");
-            this.DeletePluginLocaleResource("Plugins.Widgets.Polls.Fields.WidgetZone.Hint");
-            this.DeletePluginLocaleResource("Plugins.Widgets.Polls.Fields.QtdPolls");
-            this.DeletePluginLocaleResource("Plugins.Widgets.Polls.Fields.QtdPolls.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Widgets.Polls.Fields.WidgetZone");
+            _localizationService.DeletePluginLocaleResource("Plugins.Widgets.Polls.Fields.WidgetZone.Hint");
+            _localizationService.DeletePluginLocaleResource("Plugins.Widgets.Polls.Fields.QtdPolls");
+            _localizationService.DeletePluginLocaleResource("Plugins.Widgets.Polls.Fields.QtdPolls.Hint");
 
             base.Uninstall();
         }
+
+        public string GetWidgetViewComponentName(string widgetZone) => "WidgetsPolls";
     }
 }
