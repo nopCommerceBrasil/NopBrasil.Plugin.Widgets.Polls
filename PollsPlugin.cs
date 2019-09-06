@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Nop.Core;
-using Nop.Core.Plugins;
+using Nop.Services.Plugins;
 using Nop.Services.Cms;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
@@ -56,5 +56,7 @@ namespace NopBrasil.Plugin.Widgets.Polls
         }
 
         public string GetWidgetViewComponentName(string widgetZone) => "WidgetsPolls";
+
+        public bool HideInWidgetList => false;
     }
 }
